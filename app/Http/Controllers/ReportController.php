@@ -9,37 +9,42 @@ use Barryvdh\DomPDF\Facade\Pdf;
 
 class ReportController extends Controller
 {
-    
+
     public function index(Request $request)
-{
-    $date = $request->date ?? now()->toDateString();
-
-    $transactions = Transaction::with('details.product', 'user')
-        ->whereDate('transaction_date', $date)
-        ->get();
-
-    $totalIncome = $transactions->sum('total');
-
-    // total produk terjual
-    $totalQty = $transactions->flatMap->details->sum('qty');
-
-    // konsinyasi & keuntungan
-    $totalConsignment = $totalIncome * 0.8;
-    $totalProfit = $totalIncome * 0.2;
-
-    return view('reports.index', compact(
-        'transactions',
-        'totalIncome',
-        'totalQty',
-        'totalConsignment',
-        'totalProfit',
-        'date'
-    ));
-}
-
-    public function exportPdf()
     {
-        $transactions = Transaction::with('user')
+        $date = $request->date ?? now()->toDateString();
+
+        $transactions = Transaction::with('details.product', 'user')
+            ->whereDate('transaction_date', $date)
+            ->get();
+
+        $totalIncome = $transactions->sum('total');
+
+        // total produk terjual
+        $totalQty = $transactions->flatMap->details->sum('qty');
+
+        // konsinyasi & keuntungan
+        $totalConsignment = $totalIncome * 0.8;
+        $totalProfit = $totalIncome * 0.2;
+
+        return view('reports.index', compact(
+            'transactions',
+            'totalIncome',
+            'totalQty',
+            'totalConsignment',
+            'totalProfit',
+            'date'
+        ));
+    }
+
+    public function exportPdf(Request $request)
+    {
+        // Ambil tanggal dari request, atau default hari ini
+        $date = $request->date ?? now()->toDateString();
+
+        // Ambil transaksi SESUAI TANGGAL SAJA
+        $transactions = Transaction::with(['details.product', 'user'])
+            ->whereDate('transaction_date', $date)
             ->orderBy('transaction_date', 'desc')
             ->get();
 
@@ -47,13 +52,12 @@ class ReportController extends Controller
 
         $pdf = app('dompdf.wrapper')->loadView(
             'reports.pdf',
-            compact('transactions', 'totalIncome')
+            compact('transactions', 'totalIncome', 'date')
         );
 
-
-        return $pdf->download('laporan-penjualan.pdf');
+        return $pdf->download('laporan-penjualan-' . $date . '.pdf');
     }
 }
 
-  
+
 

@@ -8,37 +8,44 @@
         </h2>
 
         @if(session('error'))
-        <div class="bg-red-100 text-red-700 p-3 rounded mb-4 text-sm">
-            {{ session('error') }}
-        </div>
+            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4">
+                {{ session('error') }}
+            </div>
         @endif
+
+        <x-auth-session-status class="mb-4" :status="session('status')" />
 
         <form method="POST" action="{{ route('login') }}">
             @csrf
 
             <div>
-                <label for="email" class="block text-sm font-medium text-gray-700">
-                    Email
-                </label>
-                <input id="email"
-                       class="block mt-1 w-full border border-gray-300 rounded px-3 py-2 focus:ring-blue-500 focus:border-blue-500"
-                       type="email"
-                       name="email"
-                       required
-                       autofocus
+                <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
+                <input id="email" 
+                       class="block mt-1 w-full border border-gray-300 rounded px-3 py-2 focus:ring-blue-500 focus:border-blue-500 @error('email') border-red-500 @enderror" 
+                       type="email" 
+                       name="email" 
+                       value="{{ old('email') }}" 
+                       required 
+                       autofocus 
                        placeholder="masukkan email">
+                
+                @error('email')
+                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                @enderror
             </div>
 
             <div class="mt-4">
-                <label for="password" class="block text-sm font-medium text-gray-700">
-                    Password
-                </label>
-                <input id="password"
-                       class="block mt-1 w-full border border-gray-300 rounded px-3 py-2 focus:ring-blue-500 focus:border-blue-500"
-                       type="password"
-                       name="password"
-                       required
+                <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
+                <input id="password" 
+                       class="block mt-1 w-full border border-gray-300 rounded px-3 py-2 focus:ring-blue-500 focus:border-blue-500 @error('password') border-red-500 @enderror" 
+                       type="password" 
+                       name="password" 
+                       required 
                        placeholder="masukkan password">
+
+                @error('password')
+                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                @enderror
             </div>
 
             <div class="mt-6">
@@ -48,7 +55,6 @@
                 </button>
             </div>
         </form>
-
     </div>
 </div>
 </x-guest-layout>
