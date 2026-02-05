@@ -4,7 +4,8 @@ composer install
 copy .env.example .env
 php artisan key:generate
 # (Edit file .env dulu, atur nama database)
-php artisan migrate:fresh --seed
-npm install
-npm run build
+php artisan migrate --seed (ini kalo belum ada database)
+php artisan migrate:fresh --seed (ini mah kalo database nya udah ada)
+npm install (harus di jalanin di bash)
+npm run build (harus di jalanin di bash)
 php artisan serve
