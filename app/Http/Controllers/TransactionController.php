@@ -13,7 +13,6 @@ class TransactionController extends Controller
 {
     public function create()
     {
-        // Hanya ambil produk yang stoknya ada
         $products = Product::where('stock', '>', 0)->orderBy('name')->get();
         return view('transactions.create', compact('products'));
     }
@@ -25,7 +24,6 @@ class TransactionController extends Controller
             'qty.*' => 'integer|min:0',
         ]);
 
-        // Filter barang yang dibeli saja (qty > 0)
         $itemsToBuy = array_filter($request->qty, fn($val) => $val > 0);
 
         if (empty($itemsToBuy)) {
@@ -33,21 +31,18 @@ class TransactionController extends Controller
         }
 
         try {
-            DB::beginTransaction(); // Mulai Transaksi Database
+            DB::beginTransaction();
 
-            // 1. Buat Invoice
             $transaction = Transaction::create([
                 'user_id' => Auth::id(),
                 'transaction_date' => now(),
                 'invoice_code' => 'INV-' . time(),
-                'total' => 0, // Nanti diupdate
+                'total' => 0, 
             ]);
 
             $total = 0;
 
-            // 2. Loop Barang
             foreach ($itemsToBuy as $productId => $qty) {
-                // KUNCI stok produk agar aman dari bentrok (Penting!)
                 $product = Product::lockForUpdate()->find($productId);
 
                 if (!$product) continue;
@@ -59,7 +54,6 @@ class TransactionController extends Controller
                 $subtotal = $product->price * $qty;
                 $total += $subtotal;
 
-                // Simpan Detail
                 TransactionDetail::create([
                     'transaction_id' => $transaction->id,
                     'product_id' => $productId,
@@ -68,20 +62,27 @@ class TransactionController extends Controller
                     'subtotal' => $subtotal,
                 ]);
 
-                // Kurangi Stok
                 $product->decrement('stock', $qty);
             }
 
-            // 3. Update Total & Simpan
             $transaction->update(['total' => $total]);
             
-            DB::commit(); // Simpan Permanen
+            DB::commit(); 
 
-            return back()->with('success', "Transaksi Berhasil! Total: Rp " . number_format($total));
+            return redirect()->route('transactions.print', $transaction->id);
 
         } catch (\Exception $e) {
-            DB::rollBack(); // Batalkan semua jika error
+            DB::rollBack(); 
             return back()->with('error', 'Gagal: ' . $e->getMessage());
         }
+        
+    }
+
+    public function print(Transaction $transaction)
+    {
+        // Pastikan kasir hanya bisa print transaksi miliknya sendiri (opsional)
+        // if ($transaction->user_id !== auth()->id()) abort(403);
+
+        return view('transactions.print', compact('transaction'));
     }
 }

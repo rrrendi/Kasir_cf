@@ -10,26 +10,26 @@ class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
-        // 1. Buat Akun Admin
+        // 1. Buat User Admin
         User::firstOrCreate(
-            ['email' => 'admin@kasir.com'],
+            ['email' => 'admin@gmail.com'],
             [
                 'name' => 'Administrator',
-                'password' => Hash::make('password'),
+                'password' => Hash::make('admin123'),
                 'role' => 'admin',
             ]
         );
 
-        // 2. Buat Akun Kasir
+        // 2. Buat User Kasir
         User::firstOrCreate(
-            ['email' => 'kasir@kasir.com'],
+            ['email' => 'kasir@gmail.com'],
             [
                 'name' => 'Kasir 01',
-                'password' => Hash::make('password'),
+                'password' => Hash::make('kasir123'),
                 'role' => 'kasir',
             ]
         );
         
-        $this->command->info('User Admin & Kasir berhasil dibuat!');
+        $this->command->info('User Admin & Kasir BERHASIL dibuat!');
     }
 }

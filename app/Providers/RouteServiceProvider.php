@@ -11,17 +11,11 @@ use Illuminate\Support\Facades\Route;
 class RouteServiceProvider extends ServiceProvider
 {
     /**
-     * The path to your application's "home" route.
-     *
-     * Typically, users are redirected here after authentication.
-     *
-     * @var string
+     * GANTI BAGIAN INI.
+     * Jangan '/'. Arahkan ke dashboard admin.
      */
-    public const HOME = '/';
+    public const HOME = '/admin/dashboard'; 
 
-    /**
-     * Define your route model bindings, pattern filters, and other route configuration.
-     */
     public function boot(): void
     {
         RateLimiter::for('api', function (Request $request) {

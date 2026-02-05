@@ -10,17 +10,25 @@ use Symfony\Component\HttpFoundation\Response;
 
 class RedirectIfAuthenticated
 {
-    /**
-     * Handle an incoming request.
-     *
-     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
-     */
     public function handle(Request $request, Closure $next, string ...$guards): Response
     {
         $guards = empty($guards) ? [null] : $guards;
 
         foreach ($guards as $guard) {
             if (Auth::guard($guard)->check()) {
+                
+                // LOGIKA BARU: Cek Role User
+                $role = Auth::user()->role;
+
+                if ($role === 'admin') {
+                    return redirect()->route('admin.dashboard');
+                }
+                
+                if ($role === 'kasir') {
+                    return redirect()->route('kasir.dashboard');
+                }
+
+                // Default jika role tidak dikenal
                 return redirect(RouteServiceProvider::HOME);
             }
         }

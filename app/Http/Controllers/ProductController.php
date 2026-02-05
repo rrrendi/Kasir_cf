@@ -7,9 +7,18 @@ use Illuminate\Http\Request;
 
 class ProductController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $products = Product::orderBy('created_at', 'desc')->get();
+        // Fitur Pencarian & Pagination
+        $query = Product::query();
+
+        if ($request->has('search')) {
+            $query->where('name', 'like', '%' . $request->search . '%');
+        }
+
+        // Tampilkan 10 data per halaman, urutkan dari yang terbaru
+        $products = $query->latest()->paginate(10);
+
         return view('products.index', compact('products'));
     }
 

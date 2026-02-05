@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth; // Tambahkan ini
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\TransactionController;
@@ -8,16 +9,24 @@ use App\Http\Controllers\ReportController;
 
 /*
 |--------------------------------------------------------------------------
-| Public Route
+| Public Route (Root)
 |--------------------------------------------------------------------------
 */
-// Route::get('/', function () {
-//     return view('public.home');
-// })->name('home');
-
 Route::get('/', function () {
+    // Cek apakah user sudah login?
+    if (Auth::check()) {
+        // Jika Admin, lempar ke dashboard admin
+        if (Auth::user()->role === 'admin') {
+            return redirect()->route('admin.dashboard');
+        }
+        // Jika Kasir, lempar ke dashboard kasir
+        if (Auth::user()->role === 'kasir') {
+            return redirect()->route('kasir.dashboard');
+        }
+    }
+    // Jika belum login, tampilkan form login
     return view('auth.login');
-});
+})->name('login'); // Beri nama route ini 'login'
 
 
 /*
@@ -25,6 +34,7 @@ Route::get('/', function () {
 | Admin Routes
 |--------------------------------------------------------------------------
 */
+// ... (lanjutkan kode route admin Anda seperti biasa di bawah sini)
 Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::get('/admin/dashboard', function () {
         return view('admin.dashboard');
@@ -54,11 +64,15 @@ Route::middleware(['auth', 'role:kasir'])->group(function () {
 
     Route::post('/transactions', [TransactionController::class, 'store'])
         ->name('transactions.store');
+    
+    // Tambahkan route cetak struk disini jika belum ada
+    Route::get('/transactions/{transaction}/print', [TransactionController::class, 'print'])
+        ->name('transactions.print');
 });
 
 /*
 |--------------------------------------------------------------------------
-| Profile (Breeze)
+| Profile Routes
 |--------------------------------------------------------------------------
 */
 Route::middleware('auth')->group(function () {
@@ -67,9 +81,4 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-/*
-|--------------------------------------------------------------------------
-| Auth Routes (WAJIB)
-|--------------------------------------------------------------------------
-*/
 require __DIR__ . '/auth.php';

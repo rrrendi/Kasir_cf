@@ -1,60 +1,37 @@
 <x-guest-layout>
-<div class="min-h-screen flex items-center justify-center bg-gray-50">
+    <x-auth-session-status class="mb-4" :status="session('status')" />
 
-    <div class="w-full max-w-md bg-white p-8 rounded-lg shadow-md border border-gray-200">
-
-        <h2 class="text-2xl font-bold text-center text-gray-800 mb-6">
-            Login Sistem Kasir
-        </h2>
-
-        @if(session('error'))
-            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4">
-                {{ session('error') }}
+    @if ($errors->any() || session('error'))
+        <div class="mb-6 bg-red-50 border border-red-100 rounded-lg p-4 flex items-start gap-3">
+            <svg class="w-5 h-5 text-red-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+            <div class="text-sm text-red-600">
+                @if(session('error'))
+                    <p class="font-medium">{{ session('error') }}</p>
+                @endif
+                @foreach ($errors->all() as $error)
+                    <p>{{ $error }}</p>
+                @endforeach
             </div>
-        @endif
+        </div>
+    @endif
 
-        <x-auth-session-status class="mb-4" :status="session('status')" />
+    <form method="POST" action="{{ route('login') }}" class="space-y-5">
+        @csrf
 
-        <form method="POST" action="{{ route('login') }}">
-            @csrf
+        <div>
+            <label for="email" class="block text-sm font-semibold text-gray-700 mb-1.5">Email Address</label>
+            <input id="email" class="block w-full px-4 py-3 rounded-lg bg-white border border-gray-300 text-gray-900 placeholder-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all text-sm shadow-sm" 
+                   type="email" name="email" value="{{ old('email') }}" required autofocus placeholder="admin@kasir.com" />
+        </div>
 
-            <div>
-                <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
-                <input id="email" 
-                       class="block mt-1 w-full border border-gray-300 rounded px-3 py-2 focus:ring-blue-500 focus:border-blue-500 @error('email') border-red-500 @enderror" 
-                       type="email" 
-                       name="email" 
-                       value="{{ old('email') }}" 
-                       required 
-                       autofocus 
-                       placeholder="masukkan email">
-                
-                @error('email')
-                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                @enderror
-            </div>
+        <div>
+            <label for="password" class="block text-sm font-semibold text-gray-700 mb-1.5">Password</label>
+            <input id="password" class="block w-full px-4 py-3 rounded-lg bg-white border border-gray-300 text-gray-900 placeholder-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all text-sm shadow-sm"
+                   type="password" name="password" required placeholder="••••••••" />
+        </div>
 
-            <div class="mt-4">
-                <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
-                <input id="password" 
-                       class="block mt-1 w-full border border-gray-300 rounded px-3 py-2 focus:ring-blue-500 focus:border-blue-500 @error('password') border-red-500 @enderror" 
-                       type="password" 
-                       name="password" 
-                       required 
-                       placeholder="masukkan password">
-
-                @error('password')
-                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                @enderror
-            </div>
-
-            <div class="mt-6">
-                <button type="submit"
-                        class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition font-medium">
-                    Login
-                </button>
-            </div>
-        </form>
-    </div>
-</div>
+        <button type="submit" class="w-full py-3 px-4 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg shadow-md hover:shadow-lg transition-all transform hover:-translate-y-0.5 text-sm tracking-wide mt-2">
+            MASUK KE DASHBOARD
+        </button>
+    </form>
 </x-guest-layout>
