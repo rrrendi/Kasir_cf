@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\URL;
+use Illuminate\Pagination\Paginator;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -23,5 +24,7 @@ class AppServiceProvider extends ServiceProvider
         // if (app()->environment('local')) {
         //     URL::forceScheme('https');
         // } //cloudflared tunnel --url http://127.0.0.1:8000 --protocol http2
+
+        Paginator::useTailwind();
     }
 }

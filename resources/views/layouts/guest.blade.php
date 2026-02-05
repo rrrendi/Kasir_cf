@@ -4,8 +4,18 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>{{ config('app.name', 'Kantin CF') }}</title>
+
+    <title>{{ config('app.name', 'Kantin CF') }} - Login</title>
     
+    <meta property="og:site_name" content="Kantin CF" />
+    <meta property="og:title" content="Kantin CF - Login System" />
+    <meta property="og:description" content="Masuk ke sistem kasir Kantin CF untuk mengelola transaksi dan stok." />
+    <meta property="og:image" content="{{ asset('images/logo.png') }}" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="{{ url()->current() }}" />
+
+    <link rel="icon" type="image/png" href="{{ asset('images/logo.png') }}">
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -17,7 +27,7 @@
     </style>
 </head>
 <body class="antialiased text-gray-900 bg-gray-50">
-    <div class="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0 bg-gray-50 relative overflow-hidden">
+    <div class="min-h-screen flex flex-col justify-center items-center pt-6 sm:pt-0 bg-gray-50 relative overflow-hidden px-6">
         
         <div class="absolute top-0 left-0 w-full h-full overflow-hidden z-0 pointer-events-none">
             <div class="absolute -top-[10%] -left-[10%] w-[50%] h-[50%] bg-blue-100 rounded-full blur-[100px] opacity-60"></div>
@@ -25,7 +35,7 @@
         </div>
 
         <div class="mb-8 z-10 text-center">
-            <h1 class="text-4xl font-extrabold text-gray-900 tracking-tight">Kantin<span class="text-blue-600">CF</span></h1>
+            <h1 class="text-3xl md:text-4xl font-extrabold text-gray-900 tracking-tight">Kantin<span class="text-blue-600">CF</span></h1>
             <p class="text-gray-500 mt-2 text-sm font-medium">Sistem Kasir Terpadu</p>
         </div>
 
@@ -33,7 +43,7 @@
             {{ $slot }}
         </div>
         
-        <div class="mt-8 text-gray-400 text-xs z-10">
+        <div class="mt-8 text-gray-400 text-xs z-10 text-center">
             &copy; {{ date('Y') }} Kantin CF. All rights reserved.
         </div>
     </div>

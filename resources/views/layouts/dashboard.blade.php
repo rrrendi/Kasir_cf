@@ -3,7 +3,19 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+
     <title>Kantin CF - Sistem POS</title>
+    
+    <meta property="og:site_name" content="Kantin CF" />
+    <meta property="og:title" content="Kantin CF - Dashboard POS" />
+    <meta property="og:description" content="Sistem Point of Sales untuk manajemen stok dan transaksi harian." />
+    <meta property="og:image" content="{{ asset('images/logo.png') }}" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="{{ url()->current() }}" />
+
+    <link rel="icon" type="image/png" href="{{ asset('images/logo.png') }}">
     
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     
@@ -23,11 +35,14 @@
         <aside class="fixed inset-y-0 left-0 z-50 w-64 bg-white border-r border-gray-200 transition-transform duration-300 transform md:relative md:translate-x-0"
                :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'">
             
-            <div class="h-16 flex items-center px-6 border-b border-gray-100">
+            <div class="h-16 flex items-center justify-between px-6 border-b border-gray-100">
                 <div class="flex items-center gap-2 font-bold text-xl text-gray-900">
                     <div class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center text-white text-lg">K</div>
                     <span>Kantin<span class="text-blue-600">CF</span></span>
                 </div>
+                <button @click="sidebarOpen = false" class="md:hidden text-gray-500 hover:text-red-500">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
             </div>
 
             <nav class="p-4 space-y-1 overflow-y-auto h-[calc(100vh-8rem)]">
@@ -78,11 +93,14 @@
         </aside>
 
         <div class="flex-1 flex flex-col min-h-screen overflow-hidden">
-            <header class="bg-white border-b border-gray-200 h-16 flex items-center justify-between px-4 md:hidden z-40">
-                <span class="font-bold text-lg text-gray-800">KantinCF</span>
-                <button @click="sidebarOpen = !sidebarOpen" class="text-gray-600 p-2 rounded-md hover:bg-gray-100">
+            
+            <header class="bg-white border-b border-gray-200 h-16 flex items-center px-4 md:hidden sticky top-0 z-40 gap-3 shadow-sm">
+                
+                <button @click="sidebarOpen = !sidebarOpen" class="text-gray-600 p-2 rounded-md hover:bg-gray-100 focus:outline-none -ml-2">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
                 </button>
+
+                <span class="font-bold text-lg text-gray-800">KantinCF</span>
             </header>
 
             <main class="flex-1 overflow-x-hidden overflow-y-auto bg-gray-50 p-6 md:p-8">

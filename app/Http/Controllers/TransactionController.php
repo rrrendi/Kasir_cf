@@ -11,9 +11,16 @@ use Illuminate\Support\Facades\Auth;
 
 class TransactionController extends Controller
 {
-    public function create()
+    public function create(Request $request)
     {
-        $products = Product::where('stock', '>', 0)->orderBy('name')->get();
+        // Pastikan ada bagian ->when(...) ini
+        $products = Product::where('stock', '>', 0)
+            ->when($request->search, function ($query) use ($request) {
+                $query->where('name', 'like', '%' . $request->search . '%');
+            })
+            ->orderBy('name', 'asc')
+            ->get();
+
         return view('transactions.create', compact('products'));
     }
 
@@ -37,7 +44,7 @@ class TransactionController extends Controller
                 'user_id' => Auth::id(),
                 'transaction_date' => now(),
                 'invoice_code' => 'INV-' . time(),
-                'total' => 0, 
+                'total' => 0,
             ]);
 
             $total = 0;
@@ -45,7 +52,8 @@ class TransactionController extends Controller
             foreach ($itemsToBuy as $productId => $qty) {
                 $product = Product::lockForUpdate()->find($productId);
 
-                if (!$product) continue;
+                if (!$product)
+                    continue;
 
                 if ($qty > $product->stock) {
                     throw new \Exception("Stok {$product->name} kurang! Sisa: {$product->stock}");
@@ -66,16 +74,16 @@ class TransactionController extends Controller
             }
 
             $transaction->update(['total' => $total]);
-            
-            DB::commit(); 
+
+            DB::commit();
 
             return redirect()->route('transactions.print', $transaction->id);
 
         } catch (\Exception $e) {
-            DB::rollBack(); 
+            DB::rollBack();
             return back()->with('error', 'Gagal: ' . $e->getMessage());
         }
-        
+
     }
 
     public function print(Transaction $transaction)

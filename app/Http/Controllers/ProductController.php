@@ -31,8 +31,9 @@ class ProductController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'price' => 'required|numeric|min:0',
-            'stock' => 'required|integer|min:0',
+            // max:20 digit (untuk bigInteger) atau batasi wajar misal max:1000000 (1 juta)
+            'price' => 'required|numeric|min:0|max:999999999999', 
+            'stock' => 'required|integer|min:0|max:1000000', // Contoh: Stok maksimal 1 juta
         ]);
 
         Product::create($validated);

@@ -1,80 +1,80 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Auth; // Tambahkan ini
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Request;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\ReportController;
+use App\Models\Transaction; // Penting untuk Chart
 
 /*
 |--------------------------------------------------------------------------
-| Public Route (Root)
+| Web Routes (Full Configuration)
 |--------------------------------------------------------------------------
 */
+
+// 1. Root: Arahkan User Sesuai Role
 Route::get('/', function () {
-    // Cek apakah user sudah login?
     if (Auth::check()) {
-        // Jika Admin, lempar ke dashboard admin
         if (Auth::user()->role === 'admin') {
             return redirect()->route('admin.dashboard');
         }
-        // Jika Kasir, lempar ke dashboard kasir
         if (Auth::user()->role === 'kasir') {
             return redirect()->route('kasir.dashboard');
         }
     }
-    // Jika belum login, tampilkan form login
     return view('auth.login');
-})->name('login'); // Beri nama route ini 'login'
+})->name('login');
 
 
-/*
-|--------------------------------------------------------------------------
-| Admin Routes
-|--------------------------------------------------------------------------
-*/
-// ... (lanjutkan kode route admin Anda seperti biasa di bawah sini)
+// 2. Group Admin
 Route::middleware(['auth', 'role:admin'])->group(function () {
+    
+    // Dashboard Admin
     Route::get('/admin/dashboard', function () {
         return view('admin.dashboard');
     })->name('admin.dashboard');
 
+    // Manajemen Produk (CRUD)
     Route::resource('products', ProductController::class);
 
-    Route::get('/reports', [ReportController::class, 'index'])
-        ->name('reports.index');
-
-    Route::get('/reports/pdf', [ReportController::class, 'exportPdf'])
-        ->name('reports.pdf');
+    // Laporan
+    Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
+    Route::get('/reports/pdf', [ReportController::class, 'exportPdf'])->name('reports.pdf');
 });
 
-/*
-|--------------------------------------------------------------------------
-| Kasir Routes
-|--------------------------------------------------------------------------
-*/
+
+// 3. Group Kasir
 Route::middleware(['auth', 'role:kasir'])->group(function () {
+    
+    // Dashboard Kasir (Dengan Logika Grafik 7 Hari Terakhir)
     Route::get('/kasir/dashboard', function () {
-        return view('kasir.dashboard');
+        // Ambil data penjualan 7 hari terakhir, dikelompokkan per tanggal
+        $salesData = Transaction::selectRaw('DATE(created_at) as date, SUM(total) as total')
+            ->where('created_at', '>=', now()->subDays(7))
+            ->groupBy('date')
+            ->orderBy('date', 'asc')
+            ->get();
+
+        // Format data agar bisa dibaca Chart.js
+        $dates = $salesData->pluck('date')->map(fn($date) => \Carbon\Carbon::parse($date)->format('d M'))->toArray();
+        $totals = $salesData->pluck('total')->toArray();
+
+        return view('kasir.dashboard', compact('dates', 'totals'));
     })->name('kasir.dashboard');
 
-    Route::get('/transactions/create', [TransactionController::class, 'create'])
-        ->name('transactions.create');
-
-    Route::post('/transactions', [TransactionController::class, 'store'])
-        ->name('transactions.store');
+    // Transaksi
+    Route::get('/transactions/create', [TransactionController::class, 'create'])->name('transactions.create');
+    Route::post('/transactions', [TransactionController::class, 'store'])->name('transactions.store');
     
-    // Tambahkan route cetak struk disini jika belum ada
-    Route::get('/transactions/{transaction}/print', [TransactionController::class, 'print'])
-        ->name('transactions.print');
+    // Cetak Struk
+    Route::get('/transactions/{transaction}/print', [TransactionController::class, 'print'])->name('transactions.print');
 });
 
-/*
-|--------------------------------------------------------------------------
-| Profile Routes
-|--------------------------------------------------------------------------
-*/
+
+// 4. Group Profile (Bawaan Laravel Breeze)
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
