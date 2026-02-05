@@ -1,0 +1,10 @@
+git clone https://github.com/rrrendi/Kasir_cf.git
+cd Kasir_cf
+composer install
+copy .env.example .env
+php artisan key:generate
+# (Edit file .env dulu, atur nama database)
+php artisan migrate:fresh --seed
+npm install
+npm run build
+php artisan serve
