@@ -7,13 +7,8 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\ReportController;
-use App\Models\Transaction; // Penting untuk Chart
-
-/*
-|--------------------------------------------------------------------------
-| Web Routes (Full Configuration)
-|--------------------------------------------------------------------------
-*/
+use App\Http\Controllers\Kasir\CategoryController;
+use App\Models\Transaction;
 
 // 1. Root: Arahkan User Sesuai Role
 Route::get('/', function () {
@@ -30,12 +25,12 @@ Route::get('/', function () {
 
 
 // 2. Group Admin
-Route::middleware(['auth', 'role:admin'])->group(function () {
+Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
     
     // Dashboard Admin
-    Route::get('/admin/dashboard', function () {
+    Route::get('/dashboard', function () {
         return view('admin.dashboard');
-    })->name('admin.dashboard');
+    })->name('dashboard');
 
     // Manajemen Produk (CRUD)
     Route::resource('products', ProductController::class);
@@ -47,23 +42,25 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
 
 
 // 3. Group Kasir
-Route::middleware(['auth', 'role:kasir'])->group(function () {
+Route::middleware(['auth', 'role:kasir'])->prefix('kasir')->name('kasir.')->group(function () {
     
-    // Dashboard Kasir (Dengan Logika Grafik 7 Hari Terakhir)
-    Route::get('/kasir/dashboard', function () {
-        // Ambil data penjualan 7 hari terakhir, dikelompokkan per tanggal
+    // Dashboard Kasir
+    Route::get('/dashboard', function () {
         $salesData = Transaction::selectRaw('DATE(created_at) as date, SUM(total) as total')
             ->where('created_at', '>=', now()->subDays(7))
             ->groupBy('date')
             ->orderBy('date', 'asc')
             ->get();
 
-        // Format data agar bisa dibaca Chart.js
         $dates = $salesData->pluck('date')->map(fn($date) => \Carbon\Carbon::parse($date)->format('d M'))->toArray();
         $totals = $salesData->pluck('total')->toArray();
 
         return view('kasir.dashboard', compact('dates', 'totals'));
-    })->name('kasir.dashboard');
+    })->name('dashboard');
+
+    // Kategori Produk
+    Route::get('/categories', [CategoryController::class, 'index'])->name('categories.index');
+    Route::get('/categories/{category}/products', [CategoryController::class, 'productsByCategory'])->name('products.by_category');
 
     // Transaksi
     Route::get('/transactions/create', [TransactionController::class, 'create'])->name('transactions.create');

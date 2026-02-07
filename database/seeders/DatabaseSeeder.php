@@ -2,34 +2,110 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
 use App\Models\User;
-use Illuminate\Support\Facades\Hash;
+use App\Models\Category;
+use App\Models\Product;
+use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB; // Tambahkan ini
 
 class DatabaseSeeder extends Seeder
 {
-    public function run(): void
+    public function run()
     {
-        // 1. Buat User Admin
-        User::firstOrCreate(
-            ['email' => 'admin@gmail.com'],
-            [
+        // 1. Buat user jika belum ada
+        if (User::where('email', 'admin@example.com')->doesntExist()) {
+            User::create([
                 'name' => 'Administrator',
-                'password' => Hash::make('admin123'),
+                'email' => 'admin@gmail.com',
+                'password' => bcrypt('admin123'),
                 'role' => 'admin',
-            ]
-        );
+            ]);
+        }
 
-        // 2. Buat User Kasir
-        User::firstOrCreate(
-            ['email' => 'kasir@gmail.com'],
-            [
-                'name' => 'Kasir 01',
-                'password' => Hash::make('kasir123'),
+        if (User::where('email', 'kasir@example.com')->doesntExist()) {
+            User::create([
+                'name' => 'Kasir Toko',
+                'email' => 'kasir@gmail.com',
+                'password' => bcrypt('kasir123'),
                 'role' => 'kasir',
-            ]
-        );
-        
-        $this->command->info('User Admin & Kasir BERHASIL dibuat!');
+            ]);
+        }
+
+        // 2. Buat kategori jika belum ada
+        $categories = [
+            ['name' => 'Makanan', 'description' => 'Produk makanan', 'slug' => 'makanan'],
+            ['name' => 'Minuman', 'description' => 'Produk minuman', 'slug' => 'minuman'],
+            ['name' => 'Snack', 'description' => 'Camilan ringan', 'slug' => 'snack'],
+            ['name' => 'ATK', 'description' => 'Alat Tulis Kantor', 'slug' => 'atk'],
+            ['name' => 'Elektronik', 'description' => 'Barang elektronik kecil', 'slug' => 'elektronik'],
+        ];
+
+        foreach ($categories as $categoryData) {
+            Category::firstOrCreate(
+                ['slug' => $categoryData['slug']],
+                $categoryData
+            );
+        }
+
+        // 3. Buat produk contoh
+        $makananId = Category::where('slug', 'makanan')->first()->id;
+        $minumanId = Category::where('slug', 'minuman')->first()->id;
+        $snackId = Category::where('slug', 'snack')->first()->id;
+        $atkId = Category::where('slug', 'atk')->first()->id;
+        $elektronikId = Category::where('slug', 'elektronik')->first()->id;
+
+        $products = [
+            [
+                'name' => 'Indomie Goreng',
+                'description' => 'Mie instan rasa goreng',
+                'price' => 3500,
+                'stock' => 100,
+                'category_id' => $makananId,
+                'is_active' => true
+            ],
+            [
+                'name' => 'Aqua 600ml',
+                'description' => 'Air mineral kemasan',
+                'price' => 3000,
+                'stock' => 50,
+                'category_id' => $minumanId,
+                'is_active' => true
+            ],
+            [
+                'name' => 'Chitato',
+                'description' => 'Keripik kentang',
+                'price' => 12000,
+                'stock' => 30,
+                'category_id' => $snackId,
+                'is_active' => true
+            ],
+            [
+                'name' => 'Pulpen Pilot',
+                'description' => 'Pulpen tinta biru',
+                'price' => 5000,
+                'stock' => 40,
+                'category_id' => $atkId,
+                'is_active' => true
+            ],
+            [
+                'name' => 'Baterai AA',
+                'description' => 'Baterai alkaline',
+                'price' => 15000,
+                'stock' => 25,
+                'category_id' => $elektronikId,
+                'is_active' => true
+            ],
+        ];
+
+        foreach ($products as $productData) {
+            Product::firstOrCreate(
+                ['name' => $productData['name']],
+                $productData
+            );
+        }
+
+        $this->command->info('Seeder berhasil dijalankan!');
+        $this->command->info('Admin: admin@example.com / password123');
+        $this->command->info('Kasir: kasir@example.com / password123');
     }
 }
