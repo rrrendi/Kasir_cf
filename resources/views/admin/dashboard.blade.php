@@ -24,7 +24,8 @@
                 <p class="text-xs font-bold text-purple-600 uppercase tracking-wider mb-2">Produk Aktif</p>
                 <h3 class="text-2xl font-bold text-gray-900">{{ \App\Models\Product::count() }} <span class="text-base font-normal text-gray-400">Unit</span></h3>
             </div>
-            <a href="{{ route('products.index') }}" class="mt-4 text-xs font-medium text-purple-600 hover:text-purple-800 flex items-center">
+            
+            <a href="{{ route('admin.products.index') }}" class="mt-4 text-xs font-medium text-purple-600 hover:text-purple-800 flex items-center">
                 Lihat Inventori &rarr;
             </a>
         </div>
@@ -53,7 +54,8 @@
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <a href="{{ route('products.create') }}" class="group block bg-white p-6 rounded-2xl border border-gray-200 hover:border-blue-300 hover:ring-2 hover:ring-blue-100 transition-all">
+        
+        <a href="{{ route('admin.products.create') }}" class="group block bg-white p-6 rounded-2xl border border-gray-200 hover:border-blue-300 hover:ring-2 hover:ring-blue-100 transition-all">
             <div class="flex items-center gap-4">
                 <div class="p-3 bg-blue-50 text-blue-600 rounded-xl group-hover:bg-blue-600 group-hover:text-white transition-colors">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
@@ -65,7 +67,7 @@
             </div>
         </a>
 
-        <a href="{{ route('reports.index') }}" class="group block bg-white p-6 rounded-2xl border border-gray-200 hover:border-purple-300 hover:ring-2 hover:ring-purple-100 transition-all">
+        <a href="{{ route('admin.reports.index') }}" class="group block bg-white p-6 rounded-2xl border border-gray-200 hover:border-purple-300 hover:ring-2 hover:ring-purple-100 transition-all">
             <div class="flex items-center gap-4">
                 <div class="p-3 bg-purple-50 text-purple-600 rounded-xl group-hover:bg-purple-600 group-hover:text-white transition-colors">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>

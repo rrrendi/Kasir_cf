@@ -13,7 +13,7 @@
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         
         <div class="lg:col-span-1 space-y-6">
-            <a href="{{ route('transactions.create') }}" class="group bg-white p-8 rounded-2xl shadow-sm border border-gray-100 hover:shadow-lg hover:border-blue-200 transition-all duration-300 flex flex-col items-center justify-center text-center cursor-pointer">
+            <a href="{{ route('kasir.transactions.create') }}" class="group bg-white p-8 rounded-2xl shadow-sm border border-gray-100 hover:shadow-lg hover:border-blue-200 transition-all duration-300 flex flex-col items-center justify-center text-center cursor-pointer">
                 <div class="w-16 h-16 bg-blue-50 rounded-2xl flex items-center justify-center mb-4 group-hover:bg-blue-600 transition-colors duration-300">
                     <svg class="w-8 h-8 text-blue-600 group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
                 </div>
@@ -55,22 +55,20 @@
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         const ctx = document.getElementById('salesChart').getContext('2d');
-        
-        // Data dari Laravel Controller
         const labels = @json($dates);
         const data = @json($totals);
 
         new Chart(ctx, {
-            type: 'line', // Jenis grafik: Line (Garis) atau Bar (Batang)
+            type: 'line',
             data: {
                 labels: labels,
                 datasets: [{
                     label: 'Pendapatan (Rp)',
                     data: data,
-                    borderColor: '#2563eb', // Warna Garis (Blue-600)
-                    backgroundColor: 'rgba(37, 99, 235, 0.1)', // Warna Arsiran bawah
+                    borderColor: '#2563eb',
+                    backgroundColor: 'rgba(37, 99, 235, 0.1)',
                     borderWidth: 2,
-                    tension: 0.4, // Kelengkungan garis (0 = lurus)
+                    tension: 0.4,
                     fill: true,
                     pointBackgroundColor: '#ffffff',
                     pointBorderColor: '#2563eb',
@@ -80,45 +78,8 @@
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        display: false // Sembunyikan legend agar bersih
-                    },
-                    tooltip: {
-                        callbacks: {
-                            label: function(context) {
-                                let label = context.dataset.label || '';
-                                if (label) {
-                                    label += ': ';
-                                }
-                                if (context.parsed.y !== null) {
-                                    // Format Rupiah di Tooltip
-                                    label += new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(context.parsed.y);
-                                }
-                                return label;
-                            }
-                        }
-                    }
-                },
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        grid: {
-                            color: '#f3f4f6'
-                        },
-                        ticks: {
-                            // Format Rupiah di Sumbu Y (Kependekan, misal 1jt)
-                            callback: function(value) {
-                                return 'Rp ' + (value / 1000).toLocaleString('id-ID') + 'k';
-                            }
-                        }
-                    },
-                    x: {
-                        grid: {
-                            display: false
-                        }
-                    }
-                }
+                plugins: { legend: { display: false }, tooltip: { callbacks: { label: function(context) { let label = context.dataset.label || ''; if (label) { label += ': '; } if (context.parsed.y !== null) { label += new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(context.parsed.y); } return label; } } } },
+                scales: { y: { beginAtZero: true, grid: { color: '#f3f4f6' }, ticks: { callback: function(value) { return 'Rp ' + (value / 1000).toLocaleString('id-ID') + 'k'; } } }, x: { grid: { display: false } } }
             }
         });
     });

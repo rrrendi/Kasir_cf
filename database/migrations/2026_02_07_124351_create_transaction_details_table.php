@@ -6,9 +6,6 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up()
     {
         Schema::create('transaction_details', function (Blueprint $table) {
@@ -16,17 +13,13 @@ return new class extends Migration
             $table->foreignId('transaction_id')->constrained()->onDelete('cascade');
             $table->foreignId('product_id')->constrained()->onDelete('cascade');
             $table->integer('qty');
-            $table->integer('price');
-            $table->integer('subtotal');
+            $table->bigInteger('price');
+            $table->bigInteger('subtotal');
             $table->timestamps();
         });
     }
 
-
-    /**
-     * Reverse the migrations.
-     */
-    public function down(): void
+    public function down()
     {
         Schema::dropIfExists('transaction_details');
     }
