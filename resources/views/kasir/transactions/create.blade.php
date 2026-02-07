@@ -3,7 +3,7 @@
 @section('content')
 <div class="max-w-7xl mx-auto h-auto md:h-[calc(100vh-8rem)] pb-24 md:pb-0">
     
-    <form method="POST" action="{{ route('kasir.transactions.store') }}" class="h-full flex flex-col md:flex-row gap-6">
+    <form method="POST" action="{{ route('kasir.transactions.store') }}" class="h-full flex flex-col md:flex-row gap-6" autocomplete="off">
         @csrf
 
         <div class="flex-1 bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden flex flex-col min-h-[60vh] md:min-h-0" 
@@ -12,10 +12,10 @@
             <div class="p-4 border-b border-gray-200 bg-gray-50 flex flex-col gap-3 sticky top-0 z-20 shadow-sm">
                 <div class="flex justify-between items-center">
                     <h2 class="font-bold text-gray-800 flex items-center gap-2">
-                        <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
+                        <svg class="w-5 h-5 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
                         Katalog
                     </h2>
-                    <span class="text-xs font-medium px-3 py-1 bg-blue-100 text-blue-700 rounded-full">
+                    <span class="text-xs font-medium px-3 py-1 bg-orange-100 text-orange-700 rounded-full">
                         {{ $products->count() }} Item
                     </span>
                 </div>
@@ -24,7 +24,7 @@
                     <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none z-10">
                         <svg class="h-4 w-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                     </div>
-                    <input type="text" x-model="search" placeholder="Ketik nama barang..." class="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-300 focus:ring-1 focus:ring-blue-500 text-sm bg-white" autocomplete="off">
+                    <input type="text" x-model="search" placeholder="Ketik nama barang..." class="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-300 focus:ring-1 focus:ring-orange-500 text-sm bg-white" autocomplete="off">
                     <button type="button" x-show="search.length > 0" @click="search = ''" class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-red-500 cursor-pointer" style="display: none;">
                         <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                     </button>
@@ -45,11 +45,11 @@
 
                         <div class="p-4">
                             <h3 class="font-bold text-gray-900 mb-1 truncate">{{ $product->name }}</h3>
-                            <p class="text-blue-600 font-mono font-semibold text-sm">Rp {{ number_format($product->price, 0, ',', '.') }}</p>
+                            <p class="text-orange-600 font-mono font-semibold text-sm">Rp {{ number_format($product->price, 0, ',', '.') }}</p>
                             <div class="mt-4 pt-4 border-t border-gray-100 flex items-center gap-2">
                                 <button type="button" @click="if(qty > 0) qty--" class="w-8 h-8 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-600 font-bold" :disabled="qty <= 0">-</button>
                                 <input type="number" name="qty[{{ $product->id }}]" x-model="qty" class="w-full text-center border-gray-300 rounded-lg font-bold py-1 text-sm h-8" readonly>
-                                <button type="button" @click="if(qty < max) qty++" class="w-8 h-8 rounded-lg bg-blue-100 hover:bg-blue-200 text-blue-600 font-bold" :disabled="qty >= max || max == 0">+</button>
+                                <button type="button" @click="if(qty < max) qty++" class="w-8 h-8 rounded-lg bg-orange-100 hover:bg-orange-200 text-orange-600 font-bold" :disabled="qty >= max || max == 0">+</button>
                             </div>
                         </div>
                         @if($product->stock == 0)
@@ -72,7 +72,7 @@
                         <p class="text-xs text-gray-500 font-semibold uppercase">Aksi</p>
                         <p class="text-sm font-bold text-gray-800">Proses Bayar</p>
                     </div>
-                    <button type="submit" class="flex-1 w-full py-3 md:py-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold rounded-xl shadow-lg flex items-center justify-center gap-2">
+                    <button type="submit" class="flex-1 w-full py-3 md:py-4 bg-gradient-to-r from-orange-500 to-orange-500 text-white font-bold rounded-xl shadow-lg flex items-center justify-center gap-2">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
                         <span class="md:hidden">BAYAR</span><span class="hidden md:inline">BAYAR SEKARANG</span>
                     </button>

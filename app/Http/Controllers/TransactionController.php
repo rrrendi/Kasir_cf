@@ -17,18 +17,17 @@ class TransactionController extends Controller
             ->orderBy('name', 'asc')
             ->get();
 
-        return view('transactions.create', compact('products'));
+        // PERBAIKAN 1: Arahkan ke folder 'kasir.'
+        return view('kasir.transactions.create', compact('products'));
     }
 
     public function store(Request $request)
     {
-        // 1. Validasi Input
         $request->validate([
             'qty' => 'required|array',
             'qty.*' => 'integer|min:0',
         ]);
 
-        // 2. Filter hanya produk yang dipilih (qty > 0)
         $items = array_filter($request->qty, fn($q) => $q > 0);
 
         if (empty($items)) {
@@ -41,7 +40,6 @@ class TransactionController extends Controller
             $total = 0;
             $details = [];
 
-            // 3. Loop setiap barang untuk hitung total & kurangi stok
             foreach ($items as $id => $qty) {
                 $product = Product::lockForUpdate()->find($id);
 
@@ -51,10 +49,8 @@ class TransactionController extends Controller
                 $subtotal = $product->price * $qty;
                 $total += $subtotal;
 
-                // Kurangi stok
                 $product->decrement('stock', $qty);
 
-                // Siapkan data detail
                 $details[] = [
                     'product_id' => $product->id,
                     'qty' => $qty,
@@ -63,22 +59,20 @@ class TransactionController extends Controller
                 ];
             }
 
-            // 4. Simpan Transaksi Utama
             $transaction = Transaction::create([
-                'user_id' => Auth::id(), // Pastikan user login
+                'user_id' => Auth::id(),
                 'invoice_code' => 'INV-' . time(),
                 'total' => $total,
                 'status' => 'completed',
             ]);
 
-            // 5. Simpan Detail Belanjaan
             foreach ($details as $detail) {
                 $transaction->details()->create($detail);
             }
 
             DB::commit();
 
-            // 6. Redirect ke halaman cetak
+            // Redirect ke halaman print
             return redirect()->route('kasir.transactions.print', $transaction->id)
                              ->with('success', 'Transaksi Berhasil!');
 
@@ -90,6 +84,7 @@ class TransactionController extends Controller
 
     public function print(Transaction $transaction)
     {
-        return view('transactions.print', compact('transaction'));
+        // PERBAIKAN 2: Arahkan ke folder 'kasir.'
+        return view('kasir.transactions.print', compact('transaction'));
     }
 }

@@ -9,7 +9,6 @@ class Transaction extends Model
 {
     use HasFactory;
 
-    // IZINKAN KOLOM INI DIISI (PENTING)
     protected $fillable = [
         'user_id',
         'invoice_code',
@@ -17,13 +16,13 @@ class Transaction extends Model
         'status',
     ];
 
-    public function user()
-    {
-        return $this->belongsTo(User::class);
-    }
-
     public function details()
     {
         return $this->hasMany(TransactionDetail::class);
+    }
+    
+    public function user()
+    {
+        return $this->belongsTo(User::class);
     }
 }

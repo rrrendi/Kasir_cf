@@ -53,7 +53,7 @@
 
         <div class="mt-8 flex gap-3">
             <a href="{{ route('admin.products.index') }}" class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors">Batal</a>
-            <button type="submit" class="px-6 py-2 bg-blue-600 text-white font-bold rounded-lg hover:bg-blue-700 transition-colors shadow-lg">Simpan Perubahan</button>
+            <button type="submit" class="px-6 py-2 bg-orange-500 text-white font-bold rounded-lg hover:bg-orange-500 transition-colors shadow-lg">Simpan Perubahan</button>
         </div>
     </form>
 </div>

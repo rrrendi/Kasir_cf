@@ -10,7 +10,9 @@ return new class extends Migration
     {
         Schema::create('transactions', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            // Relasi ke User
+            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
+            
             $table->string('invoice_code')->unique();
             $table->bigInteger('total');
             $table->string('status')->default('pending');

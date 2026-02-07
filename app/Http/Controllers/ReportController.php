@@ -3,27 +3,26 @@
 namespace App\Http\Controllers;
 
 use App\Models\Transaction;
+use App\Models\TransactionDetail;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Barryvdh\DomPDF\Facade\Pdf;
-
 
 class ReportController extends Controller
 {
-
     public function index(Request $request)
     {
         $date = $request->date ?? now()->toDateString();
 
+        // Halaman Web: Tetap tampilkan detail per transaksi (opsional)
+        // PERBAIKAN: Gunakan 'created_at'
         $transactions = Transaction::with('details.product', 'user')
-            ->whereDate('transaction_date', $date)
+            ->whereDate('created_at', $date)
+            ->latest()
             ->get();
 
         $totalIncome = $transactions->sum('total');
-
-        // total produk terjual
         $totalQty = $transactions->flatMap->details->sum('qty');
-
-        // konsinyasi & keuntungan
         $totalConsignment = $totalIncome * 0.8;
         $totalProfit = $totalIncome * 0.2;
 
@@ -39,25 +38,28 @@ class ReportController extends Controller
 
     public function exportPdf(Request $request)
     {
-        // Ambil tanggal dari request, atau default hari ini
         $date = $request->date ?? now()->toDateString();
 
-        // Ambil transaksi SESUAI TANGGAL SAJA
-        $transactions = Transaction::with(['details.product', 'user'])
-            ->whereDate('transaction_date', $date)
-            ->orderBy('transaction_date', 'desc')
+        // PERBAIKAN: Ambil Detail Transaksi & Kelompokkan per Produk
+        $details = TransactionDetail::with('product')
+            ->whereHas('transaction', function($q) use ($date) {
+                $q->whereDate('created_at', $date);
+            })
+            ->select(
+                'product_id', 
+                DB::raw('SUM(qty) as total_qty'), 
+                DB::raw('SUM(subtotal) as total_subtotal')
+            )
+            ->groupBy('product_id')
             ->get();
 
-        $totalIncome = $transactions->sum('total');
+        $totalIncome = $details->sum('total_subtotal');
 
         $pdf = app('dompdf.wrapper')->loadView(
             'reports.pdf',
-            compact('transactions', 'totalIncome', 'date')
+            compact('details', 'totalIncome', 'date')
         );
 
         return $pdf->download('laporan-penjualan-' . $date . '.pdf');
     }
 }
-
-
-

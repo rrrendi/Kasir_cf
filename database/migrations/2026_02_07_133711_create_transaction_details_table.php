@@ -10,8 +10,12 @@ return new class extends Migration
     {
         Schema::create('transaction_details', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('transaction_id')->constrained()->onDelete('cascade');
-            $table->foreignId('product_id')->constrained()->onDelete('cascade');
+            // Relasi ke Transaksi
+            $table->foreignId('transaction_id')->constrained('transactions')->onDelete('cascade');
+            
+            // Relasi ke Produk
+            $table->foreignId('product_id')->constrained('products')->onDelete('cascade');
+            
             $table->integer('qty');
             $table->bigInteger('price');
             $table->bigInteger('subtotal');

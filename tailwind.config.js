@@ -11,15 +11,24 @@ export default {
 
     theme: {
         extend: {
-            colors: {
-            brand: '#1E40AF',
-            brandDark: '#1E3A8A',},
             fontFamily: {
-                sans: ['Figtree', ...defaultTheme.fontFamily.sans],
+                sans: ['Inter', ...defaultTheme.fontFamily.sans],
             },
+            colors: {
+                // Palet Oren Profesional (Warm & Energetic)
+                primary: {
+                    50: '#fff7ed',
+                    100: '#ffedd5',
+                    200: '#fed7aa',
+                    300: '#fdba74',
+                    400: '#fb923c',
+                    500: '#f97316', // Oren Utama
+                    600: '#ea580c', // Oren Gelap (Hover)
+                    700: '#c2410c',
+                }
+            }
         },
     },
 
-    
     plugins: [forms],
 };

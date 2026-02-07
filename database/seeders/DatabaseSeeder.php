@@ -4,23 +4,49 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use App\Models\User;
-use App\Models\Product;
 use App\Models\Category;
+use App\Models\Product;
 
 class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
-        // 1. User
-        User::create(['name' => 'Admin', 'email' => 'admin@gmail.com', 'password' => bcrypt('admin123'), 'role' => 'admin']);
-        User::create(['name' => 'Kasir', 'email' => 'kasir@gmail.com', 'password' => bcrypt('kasir123'), 'role' => 'kasir']);
+        // 1. Buat User
+        User::create([
+            'name' => 'Admin',
+            'email' => 'admin@gmail.com',
+            'password' => bcrypt('password'),
+            'role' => 'admin'
+        ]);
 
-        // 2. Kategori
-        $cat1 = Category::create(['name' => 'Makanan']);
-        $cat2 = Category::create(['name' => 'Minuman']);
+        User::create([
+            'name' => 'Kasir',
+            'email' => 'kasir@gmail.com',
+            'password' => bcrypt('password'),
+            'role' => 'kasir'
+        ]);
 
-        // 3. Produk
-        Product::create(['name' => 'Nasi Goreng', 'category_id' => $cat1->id, 'price' => 15000, 'stock' => 50, 'is_active' => true]);
-        Product::create(['name' => 'Es Teh', 'category_id' => $cat2->id, 'price' => 5000, 'stock' => 100, 'is_active' => true]);
+        // 2. Buat Kategori
+        $makanan = Category::create(['name' => 'Makanan']);
+        $minuman = Category::create(['name' => 'Minuman']);
+
+        // 3. Buat Produk Dummy
+        Product::create([
+            'name' => 'Nasi Goreng',
+            'category_id' => $makanan->id,
+            'description' => 'Enak',
+            'price' => 15000,
+            'stock' => 50,
+            'is_active' => true
+        ]);
+        
+        Product::create([
+            'name' => 'Es Teh',
+            'category_id' => $minuman->id,
+            'description' => 'Segar',
+            'price' => 5000,
+            'stock' => 100,
+            'is_active' => true
+        ]);
     }
 }
